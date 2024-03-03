@@ -16,6 +16,26 @@ async function query(queryObject) {
   return result;
 }
 
+async function getDatabaseVersion() {
+  const version = await query("SELECT version();");
+  return version.rows[0].version;
+}
+
+async function getActiveConnections() {
+  const connections = await query("SELECT COUNT(*) from pg_stat_activity;");
+  return connections.rows[0].count;
+}
+
+async function getMaxConnections() {
+  const max_connections = await query(
+    "SELECT * FROM pg_settings WHERE name = 'max_connections'",
+  );
+  return max_connections.rows[0].setting;
+}
+
 export default {
   query: query,
+  getDatabaseVersion: getDatabaseVersion,
+  getActiveConnections: getActiveConnections,
+  getMaxConnections: getMaxConnections,
 };

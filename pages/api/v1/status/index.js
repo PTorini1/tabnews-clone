@@ -5,6 +5,13 @@ async function status(request, response) {
 
   response.status(200).json({
     updated_at: updateAt,
+    dependencies: {
+      database: {
+        postgres_version: await database.getDatabaseVersion(),
+        max_connections: await database.getMaxConnections(),
+        active_connections: await database.getActiveConnections(),
+      },
+    },
   });
 }
 
