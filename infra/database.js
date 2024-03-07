@@ -9,9 +9,15 @@ async function query(queryObject) {
     password: process.env.POSTGRES_PASSWORD,
   });
 
+  let result = "";
   await client.connect();
-  const result = await client.query(queryObject);
-  await client.end();
+  try {
+    result = await client.query(queryObject);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    await client.end();
+  }
 
   return result;
 }
@@ -22,7 +28,11 @@ async function getDatabaseVersion() {
 }
 
 async function getActiveConnections() {
-  const connections = await query("SELECT COUNT(*) from pg_stat_activity;");
+  const databaseName = process.env.POSTGRES_DB;
+  const connections = await query({
+    text: `SELECT count(*)::int FROM pg_stat_activity WHERE datname = $1;`,
+    values: [databaseName],
+  });
   return connections.rows[0].count;
 }
 
@@ -30,7 +40,7 @@ async function getMaxConnections() {
   const max_connections = await query(
     "SELECT * FROM pg_settings WHERE name = 'max_connections'",
   );
-  return max_connections.rows[0].setting;
+  return parseInt(max_connections.rows[0].setting);
 }
 
 export default {
