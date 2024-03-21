@@ -10,11 +10,12 @@ async function query(queryObject) {
   });
 
   let result = "";
-  await client.connect();
   try {
+    await client.connect();
     result = await client.query(queryObject);
   } catch (error) {
     console.log(error);
+    throw error;
   } finally {
     await client.end();
   }
