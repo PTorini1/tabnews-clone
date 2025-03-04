@@ -4,10 +4,6 @@
   "description": "clone of tabnews project",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
-    "services:up": "docker compose -f infra/compose.yaml up -d",
-    "services:stop": "docker compose -f infra/compose.yaml stop",
-    "services:down": "docker compose -f infra/compose.yaml down",
     "dev": "npm run services:up && next dev",
     "services:up": "docker compose -f infra/compose.yaml up -d",
     "services:stop": "docker compose -f infra/compose.yaml stop",
@@ -15,11 +11,14 @@
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
     "test": "jest",
-    "test:watch": "jest --watchAll"
+    "test:watch": "jest --watchAll",
+    "migration:create": "node-pg-migrate -m infra/migrations create",
+    "migration:up": "node-pg-migrate -m infra/migrations --envPath .env.development up"
   },
   "author": "PTorini1",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^16.4.7",
     "next": "^13.1.6",
     "node-pg-migrate": "^6.2.2",
     "pg": "^8.11.3",
